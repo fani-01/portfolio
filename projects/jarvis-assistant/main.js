@@ -42,8 +42,8 @@ $(document).ready(function () {
 
   $("#MicBtn").click(function () {
     eel.play_assistant_sound();
-    $("#Oval").attr("hidden", true);
-    $("#SiriWave").attr("hidden", false);
+    $("#Oval").hide();
+    $("#SiriWave").show();
 
     eel.takeAllCommands()();
   });
@@ -52,8 +52,8 @@ $(document).ready(function () {
 
     if (e.key === "j" && e.metaKey) {
       eel.play_assistant_sound();
-      $("#Oval").attr("hidden", true);
-      $("#SiriWave").attr("hidden", false);
+      $("#Oval").hide();
+      $("#SiriWave").show();
       eel.takeAllCommands()();
     }
   }
@@ -61,12 +61,12 @@ $(document).ready(function () {
 
   function PlayAssistant(message) {
     if (message != "") {
-      $("#Oval").attr("hidden", true);
-      $("#SiriWave").attr("hidden", false);
-      eel.takeAllCommands(message);
+      $("#Oval").hide();
+      $("#SiriWave").show();
+      eel.takeAllCommands(message)();
       $("#chatbox").val("");
-      $("#MicBtn").attr("hidden", false);
-      $("#SendBtn").attr("hidden", true);
+      $("#MicBtn").show();
+      $("#SendBtn").hide();
     } else {
       console.log("Empty message, nothing sent."); 
     }
@@ -74,11 +74,11 @@ $(document).ready(function () {
 
   function ShowHideButton(message) {
     if (message.length == 0) {
-      $("#MicBtn").attr("hidden", false);
-      $("#SendBtn").attr("hidden", true);
+      $("#MicBtn").show();
+      $("#SendBtn").hide();
     } else {
-      $("#MicBtn").attr("hidden", true);
-      $("#SendBtn").attr("hidden", false);
+      $("#MicBtn").hide();
+      $("#SendBtn").show();
     }
   }
 
