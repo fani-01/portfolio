@@ -72,7 +72,7 @@ function canvasApp() {
 
 		//particle color
 		r = 0;
-		g = 30;
+		g = 0;
 		b = 255;
 
 		rgbString = "rgba(" + r + "," + g + "," + b + ","; //partial string for color which will be completed by appending alpha value.

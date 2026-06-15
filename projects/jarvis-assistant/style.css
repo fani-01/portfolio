@@ -40,7 +40,7 @@ body {
   max-width: 420px;
   width: 90%;
   padding: 2.5rem;
-  border: 1px solid rgba(0, 43, 255, 0.25);
+  border: 1px solid rgba(0, 0, 255, 0.25);
   border-radius: 20px;
   background: rgba(10, 10, 10, 0.9);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
@@ -54,7 +54,7 @@ body {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(0, 43, 255, 0.1) 0%, rgba(0, 0, 0, 0) 60%);
+  background: radial-gradient(circle, rgba(0, 0, 255, 0.1) 0%, rgba(0, 0, 0, 0) 60%);
   pointer-events: none;
   z-index: -1;
 }
@@ -92,14 +92,14 @@ body {
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(0, 43, 255, 0.5);
+  box-shadow: 0 4px 20px rgba(0, 0, 255, 0.5);
   transition: all 0.3s ease;
   letter-spacing: 1px;
 }
 
 .btn-initialize:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(0, 43, 255, 0.7);
+  box-shadow: 0 6px 25px rgba(0, 0, 255, 0.7);
 }
 
 /* Boot animation */
@@ -116,7 +116,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  border: 2px dashed rgba(0, 43, 255, 0.5);
+  border: 2px dashed rgba(0, 0, 255, 0.5);
   border-radius: 50%;
   animation: rotate-cw 10s infinite linear;
 }
@@ -184,7 +184,7 @@ body {
   border-radius: 20px;
   background: rgba(10, 10, 10, 0.8) !important;
   backdrop-filter: blur(15px);
-  border: 1px solid rgba(0, 43, 255, 0.2) !important;
+  border: 1px solid rgba(0, 0, 255, 0.2) !important;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
   padding: 1.8rem;
   display: flex;
@@ -192,7 +192,7 @@ body {
 }
 
 .jarvis-header {
-  border-bottom: 1px solid rgba(0, 43, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 255, 0.1);
   padding-bottom: 0.8rem;
 }
 
@@ -235,8 +235,8 @@ body {
     width: 100%;
     height: 100%;
     /* Deep blue ring styling matching reference image */
-    background-image: radial-gradient(rgba(0, 43, 255, 0) 50%, rgba(0, 43, 255, 0.15) 50%);
-    box-shadow: 0 0 50px rgba(0, 43, 255, 0.85), inset 0 0 50px rgba(0, 43, 255, 0.85);
+    background-image: radial-gradient(rgba(0, 0, 255, 0) 50%, rgba(0, 0, 255, 0.15) 50%);
+    box-shadow: 0 0 50px rgba(0, 0, 255, 0.85), inset 0 0 50px rgba(0, 0, 255, 0.85);
     border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
     transition: 0.4s;
     cursor: pointer;
@@ -292,13 +292,13 @@ body {
   font-weight: 500;
   font-size: 1rem;
   letter-spacing: 3px;
-  text-shadow: 0 0 10px rgba(0, 43, 255, 0.4);
+  text-shadow: 0 0 10px rgba(0, 0, 255, 0.4);
 }
 
 /* SiriWave wrap container */
 #siri-wave-wrapper {
   background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(0, 43, 255, 0.15);
+  border: 1px solid rgba(0, 0, 255, 0.15);
   border-radius: 12px;
   padding: 8px;
 }
@@ -325,7 +325,7 @@ body {
   border-radius: 12px;
   background: rgba(0, 0, 0, 0.4);
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 43, 255, 0.3) transparent;
+  scrollbar-color: rgba(0, 0, 255, 0.3) transparent;
 }
 
 .chat-log-container::-webkit-scrollbar {
@@ -337,7 +337,7 @@ body {
 }
 
 .chat-log-container::-webkit-scrollbar-thumb {
-  background: rgba(0, 43, 255, 0.3);
+  background: rgba(0, 0, 255, 0.3);
   border-radius: 10px;
 }
 
@@ -355,13 +355,13 @@ body {
 .receiver_message {
   padding: 8px 14px;
   border-radius: 16px 16px 16px 0px;
-  background: rgba(0, 43, 255, 0.1);
-  border: 1px solid rgba(0, 43, 255, 0.3);
+  background: rgba(0, 0, 255, 0.1);
+  border: 1px solid rgba(0, 0, 255, 0.3);
   color: #f5f5f5;
   font-size: 0.9rem;
   display: inline-block;
   text-align: left;
-  box-shadow: 0 4px 10px rgba(0, 43, 255, 0.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 255, 0.05);
 }
 
 .width-size {
