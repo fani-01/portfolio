@@ -1,5 +1,5 @@
 window.addEventListener("load", windowLoadHandler, false);
-var sphereRad = 140;
+var sphereRad = 80; // Adjusted to 80px radius (160px diameter) to fit perfectly inside the 300px ring
 var radius_sp = 1;
 //for debug messages
 var Debugger = function () { };
@@ -156,8 +156,7 @@ function canvasApp() {
 		cosAngle = Math.cos(turnAngle);
 
 		//background fill
-		context.fillStyle = "#000000";
-		context.fillRect(0, 0, displayWidth, displayHeight);
+		context.clearRect(0, 0, displayWidth, displayHeight);
 
 		//update and draw particles
 		p = particleList.first;
@@ -324,28 +323,4 @@ function canvasApp() {
 }
 
 
-$(function () {
-	$("#slider-range").slider({
-		range: false,
-		min: 20,
-		max: 500,
-		value: 280,
-		slide: function (event, ui) {
-			console.log(ui.value);
-			sphereRad = ui.value;
-		}
-	});
-});
-
-$(function () {
-	$("#slider-test").slider({
-		range: false,
-		min: 1.0,
-		max: 2.0,
-		value: 1,
-		step: 0.01,
-		slide: function (event, ui) {
-			radius_sp = ui.value;
-		}
-	});
-});
+// Slider controls removed as they are not used on the page and require jQuery UI
