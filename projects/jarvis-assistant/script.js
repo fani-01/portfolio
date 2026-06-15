@@ -3,7 +3,7 @@ if (document.readyState === "complete" || document.readyState === "interactive")
 } else {
     window.addEventListener("load", canvasApp, false);
 }
-var sphereRad = 70; // Adjusted to 70px radius (140px diameter) to fit perfectly inside the 150px transparent center of the ring
+var sphereRad = 105; // Enlarged to 105px radius (210px diameter) to fill the 300px ring beautifully
 var radius_sp = 1;
 //for debug messages
 var Debugger = function () { };
@@ -68,7 +68,7 @@ function canvasApp() {
 	function init() {
 		wait = 1;
 		count = wait - 1;
-		numToAddEachFrame = 8;
+		numToAddEachFrame = 12;
 
 		//particle color
 		r = 0;
@@ -98,9 +98,9 @@ function canvasApp() {
 		randAccelY = 0.1;
 		randAccelZ = 0.1;
 
-		gravity = -0; //try changing to a positive number (not too large, for example 0.3), or negative for floating upwards.
-
-		particleRad = 1.8;
+		gravity = -0.05; // Set to negative value so particles float upwards like flames
+		
+		particleRad = 2.5; // Bigger dot size
 
 		sphereCenterX = 0;
 		sphereCenterY = 0;
