@@ -243,6 +243,23 @@ body {
     animation: pulse-ring 3s infinite ease-in-out reverse;
 }
 
+/* Glass Orb reflection highlight matching the reference image */
+.square::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: calc(100% - 24px);
+    height: calc(100% - 24px);
+    border-radius: 50%;
+    /* Highlight at upper right (70% 20%), shadow at bottom left */
+    background: radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 45%, rgba(0, 0, 0, 0.45) 85%);
+    box-shadow: inset 0 0 20px rgba(0, 242, 254, 0.2), 0 0 10px rgba(0, 242, 254, 0.05);
+    pointer-events: none;
+    z-index: 15; /* Sits on top of canvas (z-index 10) */
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
 @keyframes pulse-ring {
     0%, 100% { transform: scale(1); opacity: 0.8; }
     50% { transform: scale(1.02); opacity: 1; }

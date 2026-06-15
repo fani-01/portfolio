@@ -3,324 +3,203 @@ if (document.readyState === "complete" || document.readyState === "interactive")
 } else {
     window.addEventListener("load", canvasApp, false);
 }
-var sphereRad = 105; // Enlarged to 105px radius (210px diameter) to fill the 300px ring beautifully
-var radius_sp = 1;
-//for debug messages
-var Debugger = function () { };
-Debugger.log = function (message) {
-	try {
-		console.log(message);
-	}
-	catch (exception) {
-		return;
-	}
-}
-
-function canvasSupport() {
-	return Modernizr.canvas;
-}
 
 function canvasApp() {
-	if (!canvasSupport()) {
-		return;
-	}
+    var theCanvas = document.getElementById("canvasOne");
+    if (!theCanvas || !theCanvas.getContext) {
+        return;
+    }
 
-	var theCanvas = document.getElementById("canvasOne");
-	var context = theCanvas.getContext("2d");
+    var context = theCanvas.getContext("2d");
+    var displayWidth = theCanvas.width;
+    var displayHeight = theCanvas.height;
 
-	var displayWidth;
-	var displayHeight;
-	var timer;
-	var wait;
-	var count;
-	var numToAddEachFrame;
-	var particleList;
-	var recycleBin;
-	var particleAlpha;
-	var r, g, b;
-	var fLen;
-	var m;
-	var projCenterX;
-	var projCenterY;
-	var zMax;
-	var turnAngle;
-	var turnSpeed;
-	var sphereCenterX, sphereCenterY, sphereCenterZ;
-	var particleRad;
-	var zeroAlphaDepth;
-	var randAccelX, randAccelY, randAccelZ;
-	var gravity;
-	var rgbString;
-	var p;
-	var outsideTest;
-	var nextParticle;
-	var sinAngle;
-	var cosAngle;
-	var rotX, rotZ;
-	var depthAlphaFactor;
-	var i;
-	var theta, phi;
-	var x0, y0, z0;
+    // Projection center (origin of our 3D space)
+    var projCenterX = displayWidth / 2;
+    var projCenterY = displayHeight / 2;
 
-	init();
+    // Perspective parameters
+    var fLen = 280; // Distance from viewer to z=0 plane. Lower values make perspective more dramatic.
 
-	// eel.expose(init)
-	function init() {
-		wait = 1;
-		count = wait - 1;
-		numToAddEachFrame = 12;
+    // 3D Sphere Parameters
+    var R0 = 85; // Base radius of the sphere to fit beautifully inside the rings
+    var numLat = 32; // Latitude bands (excluding poles)
+    var numLon = 64; // Longitude lines
 
-		//particle color
-		r = 0;
-		g = 0;
-		b = 255;
+    // Pre-generate the sphere grid (latitude-longitude pairs)
+    var grid = [];
+    for (var i = 1; i < numLat; i++) {
+        var theta = (i / numLat) * Math.PI;
+        for (var j = 0; j < numLon; j++) {
+            var phi = (j / numLon) * 2 * Math.PI;
+            grid.push({ theta: theta, phi: phi });
+        }
+    }
 
-		rgbString = "rgba(" + r + "," + g + "," + b + ","; //partial string for color which will be completed by appending alpha value.
-		particleAlpha = 1; //maximum alpha
+    // Sparse background star-dust inside the glass orb
+    var stars = [];
+    var numStars = 40;
+    for (var k = 0; k < numStars; k++) {
+        // Random spherical coordinates for stars to keep them inside the orb
+        var sTheta = Math.random() * Math.PI;
+        var sPhi = Math.random() * 2 * Math.PI;
+        var sRadius = Math.random() * 120 + 20; // Drifts from core outwards
+        stars.push({
+            x: sRadius * Math.sin(sTheta) * Math.cos(sPhi),
+            y: sRadius * Math.cos(sTheta),
+            z: sRadius * Math.sin(sTheta) * Math.sin(sPhi),
+            size: Math.random() * 1.0 + 0.4,
+            opacity: Math.random() * 0.35 + 0.1
+        });
+    }
 
-		displayWidth = theCanvas.width;
-		displayHeight = theCanvas.height;
+    // Animation states
+    var time = 0;
+    var angleY = 0;
+    var angleX = 0;
 
-		fLen = 320; //represents the distance from the viewer to z=0 depth.
+    // Speed of rotations
+    var rotSpeedY = 0.0055;
+    var rotSpeedX = 0.0035;
 
-		//projection center coordinates sets location of origin
-		projCenterX = displayWidth / 2;
-		projCenterY = displayHeight / 2;
+    function drawFrame() {
+        time += 1;
+        angleY = (angleY + rotSpeedY) % (2 * Math.PI);
+        angleX = (angleX + rotSpeedX) % (2 * Math.PI);
 
-		//we will not draw coordinates if they have too large of a z-coordinate (which means they are very close to the observer).
-		zMax = fLen - 2;
+        // Clear the canvas
+        context.clearRect(0, 0, displayWidth, displayHeight);
 
-		particleList = {};
-		recycleBin = {};
+        // 1. Draw Core Glow (underneath the dots)
+        var coreGlow = context.createRadialGradient(projCenterX, projCenterY, 0, projCenterX, projCenterY, 80);
+        coreGlow.addColorStop(0, "rgba(0, 136, 255, 0.45)");
+        coreGlow.addColorStop(0.4, "rgba(0, 50, 200, 0.15)");
+        coreGlow.addColorStop(1, "rgba(0, 0, 0, 0)");
+        context.fillStyle = coreGlow;
+        context.fillRect(0, 0, displayWidth, displayHeight);
 
-		//random acceleration factors - causes some random motion
-		randAccelX = 0.1;
-		randAccelY = 0.1;
-		randAccelZ = 0.1;
+        // Setup rotation trigonometric terms
+        var cosY = Math.cos(angleY);
+        var sinY = Math.sin(angleY);
+        var cosX = Math.cos(angleX);
+        var sinX = Math.sin(angleX);
 
-		gravity = -0.05; // Set to negative value so particles float upwards like flames
-		
-		particleRad = 2.5; // Bigger dot size
+        // Setup slower rotation for stars (for a nice parallax effect)
+        var cosStarY = Math.cos(angleY * 0.4);
+        var sinStarY = Math.sin(angleY * 0.4);
+        var cosStarX = Math.cos(angleX * 0.4);
+        var sinStarX = Math.sin(angleX * 0.4);
 
-		sphereCenterX = 0;
-		sphereCenterY = 0;
-		sphereCenterZ = -3 - sphereRad;
+        var drawList = [];
 
-		//alpha values will lessen as particles move further back, causing depth-based darkening:
-		zeroAlphaDepth = -750;
+        // 2. Process Stars
+        for (var idx = 0; idx < stars.length; idx++) {
+            var s = stars[idx];
+            // Rotate Y
+            var x1 = s.x * cosStarY - s.z * sinStarY;
+            var z1 = s.x * sinStarY + s.z * cosStarY;
+            // Rotate X
+            var y2 = s.y * cosStarX - z1 * sinX;
+            var z2 = s.y * sinStarX + z1 * cosStarX;
 
-		turnSpeed = 2 * Math.PI / 1200; //the sphere will rotate at this speed (one complete rotation every 1600 frames).
-		turnAngle = 0; //initial angle
+            var scale = fLen / (fLen - z2);
+            var projX = x1 * scale + projCenterX;
+            var projY = y2 * scale + projCenterY;
 
-		timer = setInterval(onTimer, 10 / 24);
-	}
+            drawList.push({
+                type: 'star',
+                projX: projX,
+                projY: projY,
+                z: z2,
+                size: s.size * scale,
+                opacity: s.opacity
+            });
+        }
 
-	function onTimer() {
-		//if enough time has elapsed, we will add new particles.		
-		count++;
-		if (count >= wait) {
+        // 3. Process Sphere Grid Points
+        for (var idx = 0; idx < grid.length; idx++) {
+            var pt = grid[idx];
 
-			count = 0;
-			for (i = 0; i < numToAddEachFrame; i++) {
-				theta = Math.random() * 2 * Math.PI;
-				phi = Math.acos(Math.random() * 2 - 1);
-				x0 = sphereRad * Math.sin(phi) * Math.cos(theta);
-				y0 = sphereRad * Math.sin(phi) * Math.sin(theta);
-				z0 = sphereRad * Math.cos(phi);
+            // Twist: Offset longitude based on latitude and time to create a spiral seam
+            var twist = 0.75 * Math.sin(pt.theta * 2.0 - time * 0.022);
+            var phiDeformed = pt.phi + twist;
 
-				//We use the addParticle function to add a new particle. The parameters set the position and velocity components.
-				//Note that the velocity parameters will cause the particle to initially fly outwards away from the sphere center (after
-				//it becomes unstuck).
-				var p = addParticle(x0, sphereCenterY + y0, sphereCenterZ + z0, 0.002 * x0, 0.002 * y0, 0.002 * z0);
+            // Wave: Multi-frequency radial undulation deforming the sphere surface
+            var wave1 = Math.sin(pt.theta * 3.0 + pt.phi * 2.0 - time * 0.04);
+            var wave2 = Math.cos(pt.theta * 2.0 - pt.phi * 3.0 + time * 0.025);
+            var r = R0 + 12 * wave1 + 6 * wave2;
 
-				//we set some "envelope" parameters which will control the evolving alpha of the particles.
-				p.attack = 50;
-				p.hold = 50;
-				p.decay = 100;
-				p.initValue = 0;
-				p.holdValue = particleAlpha;
-				p.lastValue = 0;
+            // Base 3D coordinates
+            var x = r * Math.sin(pt.theta) * Math.cos(phiDeformed);
+            var y = r * Math.cos(pt.theta);
+            var z = r * Math.sin(pt.theta) * Math.sin(phiDeformed);
 
-				//the particle will be stuck in one place until this time has elapsed:
-				p.stuckTime = 90 + Math.random() * 20;
+            // Rotate Y
+            var x1 = x * cosY - z * sinY;
+            var z1 = x * sinY + z * cosY;
+            // Rotate X
+            var y2 = y * cosX - z1 * sinX;
+            var z2 = y * sinX + z1 * cosX;
 
-				p.accelX = 0;
-				p.accelY = gravity;
-				p.accelZ = 0;
-			}
-		}
+            var scale = fLen / (fLen - z2);
+            var projX = x1 * scale + projCenterX;
+            var projY = y2 * scale + projCenterY;
 
-		//update viewing angle
-		turnAngle = (turnAngle + turnSpeed) % (2 * Math.PI);
-		sinAngle = Math.sin(turnAngle);
-		cosAngle = Math.cos(turnAngle);
+            drawList.push({
+                type: 'point',
+                projX: projX,
+                projY: projY,
+                z: z2,
+                scale: scale
+            });
+        }
 
-		//background fill
-		context.clearRect(0, 0, displayWidth, displayHeight);
+        // 4. Sort all objects back-to-front (lowest z coordinate is furthest)
+        drawList.sort(function (a, b) {
+            return a.z - b.z;
+        });
 
-		//update and draw particles
-		p = particleList.first;
-		while (p != null) {
-			//before list is altered record next particle
-			nextParticle = p.next;
+        // 5. Render Objects
+        for (var idx = 0; idx < drawList.length; idx++) {
+            var obj = drawList[idx];
 
-			//update age
-			p.age++;
+            // Clip boundaries
+            if (obj.projX < 0 || obj.projX > displayWidth || obj.projY < 0 || obj.projY > displayHeight) {
+                continue;
+            }
 
-			//if the particle is past its "stuck" time, it will begin to move.
-			if (p.age > p.stuckTime) {
-				p.velX += p.accelX + randAccelX * (Math.random() * 2 - 1);
-				p.velY += p.accelY + randAccelY * (Math.random() * 2 - 1);
-				p.velZ += p.accelZ + randAccelZ * (Math.random() * 2 - 1);
+            if (obj.type === 'star') {
+                // Dim stars based on depth
+                var alpha = obj.opacity * (0.35 + 0.65 * (obj.z + 120) / 240);
+                alpha = Math.max(0, Math.min(1, alpha));
+                context.fillStyle = "rgba(255, 255, 255, " + alpha + ")";
+                context.beginPath();
+                context.arc(obj.projX, obj.projY, obj.size, 0, 2 * Math.PI);
+                context.fill();
+            } else {
+                // Normalized depth factor from 0 (back) to 1 (front)
+                var depthFactor = (obj.z + 105) / 210;
+                depthFactor = Math.max(0, Math.min(1, depthFactor));
 
-				p.x += p.velX;
-				p.y += p.velY;
-				p.z += p.velZ;
-			}
+                // Size and opacity scaling based on perspective and depth
+                var size = (0.75 + 1.25 * depthFactor) * obj.scale;
+                var opacity = 0.22 + 0.78 * depthFactor;
 
-			/*
-			We are doing two things here to calculate display coordinates.
-			The whole display is being rotated around a vertical axis, so we first calculate rotated coordinates for
-			x and z (but the y coordinate will not change).
-			Then, we take the new coordinates (rotX, y, rotZ), and project these onto the 2D view plane.
-			*/
-			rotX = cosAngle * p.x + sinAngle * (p.z - sphereCenterZ);
-			rotZ = -sinAngle * p.x + cosAngle * (p.z - sphereCenterZ) + sphereCenterZ;
-			m = radius_sp * fLen / (fLen - rotZ);
-			p.projX = rotX * m + projCenterX;
-			p.projY = p.y * m + projCenterY;
+                // Color interpolation: Back is deep royal blue, front is bright electric cyan/blue
+                var r = 0;
+                var g = Math.round(55 * (1 - depthFactor) + 225 * depthFactor);
+                var b = Math.round(200 * (1 - depthFactor) + 255 * depthFactor);
 
-			//update alpha according to envelope parameters.
-			if (p.age < p.attack + p.hold + p.decay) {
-				if (p.age < p.attack) {
-					p.alpha = (p.holdValue - p.initValue) / p.attack * p.age + p.initValue;
-				}
-				else if (p.age < p.attack + p.hold) {
-					p.alpha = p.holdValue;
-				}
-				else if (p.age < p.attack + p.hold + p.decay) {
-					p.alpha = (p.lastValue - p.holdValue) / p.decay * (p.age - p.attack - p.hold) + p.holdValue;
-				}
-			}
-			else {
-				p.dead = true;
-			}
+                context.fillStyle = "rgba(" + r + "," + g + "," + b + "," + opacity + ")";
+                context.beginPath();
+                context.arc(obj.projX, obj.projY, size, 0, 2 * Math.PI);
+                context.fill();
+            }
+        }
 
-			//see if the particle is still within the viewable range.
-			if ((p.projX > displayWidth) || (p.projX < 0) || (p.projY < 0) || (p.projY > displayHeight) || (rotZ > zMax)) {
-				outsideTest = true;
-			}
-			else {
-				outsideTest = false;
-			}
+        requestAnimationFrame(drawFrame);
+    }
 
-			if (outsideTest || p.dead) {
-				recycle(p);
-			}
-
-			else {
-				//depth-dependent darkening
-				depthAlphaFactor = (1 - rotZ / zeroAlphaDepth);
-				depthAlphaFactor = (depthAlphaFactor > 1) ? 1 : ((depthAlphaFactor < 0) ? 0 : depthAlphaFactor);
-				context.fillStyle = rgbString + depthAlphaFactor * p.alpha + ")";
-
-				//draw
-				context.beginPath();
-				context.arc(p.projX, p.projY, m * particleRad, 0, 2 * Math.PI, false);
-				context.closePath();
-				context.fill();
-			}
-
-			p = nextParticle;
-		}
-	}
-
-	function addParticle(x0, y0, z0, vx0, vy0, vz0) {
-		var newParticle;
-		var color;
-
-		//check recycle bin for available drop:
-		if (recycleBin.first != null) {
-			newParticle = recycleBin.first;
-			//remove from bin
-			if (newParticle.next != null) {
-				recycleBin.first = newParticle.next;
-				newParticle.next.prev = null;
-			}
-			else {
-				recycleBin.first = null;
-			}
-		}
-		//if the recycle bin is empty, create a new particle (a new ampty object):
-		else {
-			newParticle = {};
-		}
-
-		//add to beginning of particle list
-		if (particleList.first == null) {
-			particleList.first = newParticle;
-			newParticle.prev = null;
-			newParticle.next = null;
-		}
-		else {
-			newParticle.next = particleList.first;
-			particleList.first.prev = newParticle;
-			particleList.first = newParticle;
-			newParticle.prev = null;
-		}
-
-		//initialize
-		newParticle.x = x0;
-		newParticle.y = y0;
-		newParticle.z = z0;
-		newParticle.velX = vx0;
-		newParticle.velY = vy0;
-		newParticle.velZ = vz0;
-		newParticle.age = 0;
-		newParticle.dead = false;
-		if (Math.random() < 0.5) {
-			newParticle.right = true;
-		}
-		else {
-			newParticle.right = false;
-		}
-		return newParticle;
-	}
-
-	function recycle(p) {
-		//remove from particleList
-		if (particleList.first == p) {
-			if (p.next != null) {
-				p.next.prev = null;
-				particleList.first = p.next;
-			}
-			else {
-				particleList.first = null;
-			}
-		}
-		else {
-			if (p.next == null) {
-				p.prev.next = null;
-			}
-			else {
-				p.prev.next = p.next;
-				p.next.prev = p.prev;
-			}
-		}
-		//add to recycle bin
-		if (recycleBin.first == null) {
-			recycleBin.first = p;
-			p.prev = null;
-			p.next = null;
-		}
-		else {
-			p.next = recycleBin.first;
-			recycleBin.first.prev = p;
-			recycleBin.first = p;
-			p.prev = null;
-		}
-	}
+    // Start requestAnimationFrame loop
+    requestAnimationFrame(drawFrame);
 }
-
-
-// Slider controls removed as they are not used on the page and require jQuery UI
