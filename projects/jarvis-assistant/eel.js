@@ -146,6 +146,12 @@ function processCommand(message, msgEl) {
         reply = "Fani completed Deep Learning and AI/ML internships at Smart Internz, Edunet Foundation (AICTE), and AIMER Society, working on translators, quality detection, and AI documentation.";
     } else if (msg.includes("time") || msg.includes("what is the time") || msg.includes("clock")) {
         reply = "The current system time is " + new Date().toLocaleTimeString() + ". All auxiliary registers are operational.";
+    } else if (msg.includes("weekend") || msg.includes("week end") || msg.includes("plan")) {
+        reply = "For your weekend, I highly recommend exploring Fani's interactive projects: try the YOLOv8 Object Detection dashboard, or the Federated Learning dashboard! For an offline plan, how about grabbing a coffee, relaxing, and enjoying a walk outdoors?";
+    } else if (msg.includes("joke") || msg.includes("laugh") || msg.includes("funny")) {
+        reply = "Why did the neural network go to therapy? It had too many hidden layers! Or this: Why do programmers wear glasses? Because they can't C#!";
+    } else if (msg.includes("weather") || msg.includes("temperature")) {
+        reply = "Fani's local workspace climate is highly productive, and my CPU temperature is stable at 42 degrees Celsius. Expect high chances of innovative coding this weekend!";
     } else if (msg.includes("clear") || msg.includes("reset") || msg.includes("wipe")) {
         reply = "Hello, I am Your Assistant";
         if (msgEl) msgEl.innerText = reply;
