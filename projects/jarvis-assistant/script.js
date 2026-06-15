@@ -1,5 +1,5 @@
 window.addEventListener("load", windowLoadHandler, false);
-var sphereRad = 80; // Adjusted to 80px radius (160px diameter) to fit perfectly inside the 300px ring
+var sphereRad = 70; // Adjusted to 70px radius (140px diameter) to fit perfectly inside the 150px transparent center of the ring
 var radius_sp = 1;
 //for debug messages
 var Debugger = function () { };
@@ -72,7 +72,7 @@ function canvasApp() {
 
 		//particle color
 		r = 0;
-		g = 72;
+		g = 30;
 		b = 255;
 
 		rgbString = "rgba(" + r + "," + g + "," + b + ","; //partial string for color which will be completed by appending alpha value.

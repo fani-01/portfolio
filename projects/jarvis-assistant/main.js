@@ -32,7 +32,7 @@ $(document).ready(function () {
           speed: "0.20",
           height: 60,
           autostart: true,
-          waveColor: "#00f2fe",
+          waveColor: "#002bff",
           waveOffset: 0,
           rippleEffect: true,
         });

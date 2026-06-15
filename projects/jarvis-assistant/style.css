@@ -1,7 +1,7 @@
-/* Jarvis Assistant Custom CSS Stylesheet */
+/* Jarvis Assistant Custom CSS Stylesheet - Reference-aligned Theme */
 
 body {
-  background: radial-gradient(circle at center, #0b192c 0%, #000411 100%);
+  background: #000000 !important; /* Pitch Black background matching reference image */
   color: #f5f5f5;
   font-family: 'Inter', sans-serif;
   min-height: 100vh;
@@ -13,29 +13,10 @@ body {
   overflow-x: hidden;
 }
 
-/* Glowing Background Blobs */
-.glowing-bg-cyan {
-  position: fixed;
-  top: -10%;
-  left: -10%;
-  width: 50vw;
-  height: 50vw;
-  background: radial-gradient(circle, rgba(0, 242, 254, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: -2;
-}
-
+/* Hide glowing background blobs to keep page background solid black */
+.glowing-bg-cyan,
 .glowing-bg-purple {
-  position: fixed;
-  bottom: -10%;
-  right: -10%;
-  width: 60vw;
-  height: 60vw;
-  background: radial-gradient(circle, rgba(122, 0, 255, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: -2;
+  display: none !important;
 }
 
 /* Initialization Overlay */
@@ -45,8 +26,8 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(10, 10, 10, 0.88);
-  backdrop-filter: blur(25px);
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
   z-index: 9999;
   display: flex;
   justify-content: center;
@@ -59,10 +40,10 @@ body {
   max-width: 420px;
   width: 90%;
   padding: 2.5rem;
-  border: 1px solid rgba(0, 242, 254, 0.15);
+  border: 1px solid rgba(0, 43, 255, 0.25);
   border-radius: 20px;
-  background: rgba(10, 25, 47, 0.6);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+  background: rgba(10, 10, 10, 0.9);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
   position: relative;
   overflow: hidden;
 }
@@ -73,14 +54,14 @@ body {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(0, 242, 254, 0.05) 0%, rgba(0, 0, 0, 0) 60%);
+  background: radial-gradient(circle, rgba(0, 43, 255, 0.1) 0%, rgba(0, 0, 0, 0) 60%);
   pointer-events: none;
   z-index: -1;
 }
 
 .overlay-title {
   font-family: 'Outfit', sans-serif;
-  color: #00f2fe;
+  color: #002bff;
   font-weight: 700;
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
@@ -103,22 +84,22 @@ body {
 }
 
 .btn-initialize {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: #0a0a0a;
+  background: linear-gradient(135deg, #002bff 0%, #00d2ff 100%);
+  color: #ffffff;
   border: none;
   padding: 0.9rem 2.5rem;
   border-radius: 50px;
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
-  box-shadow: 0 4px 20px rgba(0, 242, 254, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 43, 255, 0.5);
   transition: all 0.3s ease;
   letter-spacing: 1px;
 }
 
 .btn-initialize:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(0, 242, 254, 0.6);
+  box-shadow: 0 6px 25px rgba(0, 43, 255, 0.7);
 }
 
 /* Boot animation */
@@ -135,7 +116,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  border: 2px dashed rgba(0, 242, 254, 0.4);
+  border: 2px dashed rgba(0, 43, 255, 0.5);
   border-radius: 50%;
   animation: rotate-cw 10s infinite linear;
 }
@@ -146,7 +127,7 @@ body {
   left: 10px;
   width: 80px;
   height: 80px;
-  border: 2px solid rgba(122, 0, 255, 0.4);
+  border: 2px solid rgba(0, 210, 255, 0.4);
   border-radius: 50%;
   animation: rotate-ccw 6s infinite linear;
 }
@@ -157,9 +138,9 @@ body {
   left: 45px;
   width: 10px;
   height: 10px;
-  background: #00f2fe;
+  background: #002bff;
   border-radius: 50%;
-  box-shadow: 0 0 15px #00f2fe;
+  box-shadow: 0 0 15px #002bff;
   animation: pulse-dot 2s infinite ease-in-out;
 }
 
@@ -187,7 +168,7 @@ body {
 }
 
 .back-link:hover {
-  color: #00f2fe;
+  color: #002bff;
   transform: translateX(-3px);
 }
 
@@ -201,26 +182,26 @@ body {
 /* Jarvis Glass Card Console */
 .jarvis-card {
   border-radius: 20px;
-  background: rgba(10, 25, 47, 0.35) !important;
+  background: rgba(10, 10, 10, 0.8) !important;
   backdrop-filter: blur(15px);
-  border: 1px solid rgba(0, 242, 254, 0.15) !important;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(0, 43, 255, 0.2) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
   padding: 1.8rem;
   display: flex;
   flex-direction: column;
 }
 
 .jarvis-header {
-  border-bottom: 1px solid rgba(0, 242, 254, 0.1);
+  border-bottom: 1px solid rgba(0, 43, 255, 0.1);
   padding-bottom: 0.8rem;
 }
 
 .status-dot {
   width: 8px;
   height: 8px;
-  background: #00f2fe;
+  background: #002bff;
   border-radius: 50%;
-  box-shadow: 0 0 10px #00f2fe;
+  box-shadow: 0 0 10px #002bff;
   animation: pulse-dot 1.5s infinite ease-in-out;
 }
 
@@ -237,7 +218,7 @@ body {
   font-size: 0.8rem;
 }
 
-/* Center Holographic Assistant Rings */
+/* Center Holographic Assistant Rings - Reference Aligned */
 .square {
     width: 300px;
     height: 300px;
@@ -253,8 +234,9 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: radial-gradient(rgba(0, 242, 254, 0) 50%, rgba(0, 242, 254, 0.06) 50%);
-    box-shadow: 0 0 35px rgba(0, 242, 254, 0.2), inset 0 0 35px rgba(0, 242, 254, 0.2);
+    /* Deep blue ring styling matching reference image */
+    background-image: radial-gradient(rgba(0, 43, 255, 0) 50%, rgba(0, 43, 255, 0.15) 50%);
+    box-shadow: 0 0 50px rgba(0, 43, 255, 0.85), inset 0 0 50px rgba(0, 43, 255, 0.85);
     border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
     transition: 0.4s;
     cursor: pointer;
@@ -274,7 +256,7 @@ body {
     border-radius: 56% 44% 63% 37% / 37% 53% 47% 63%;
 }
 
-/* Centered Canvas perfectly matching ring */
+/* Centered Particle Canvas inside the ring */
 #canvasOne {
     position: absolute;
     left: 0;
@@ -284,6 +266,9 @@ body {
     z-index: 10;
     pointer-events: none;
     background: transparent !important;
+    padding: 0;
+    margin: 0;
+    border: none;
 }
 
 @keyframes animate1 {
@@ -302,18 +287,18 @@ body {
 }
 
 #assistant-title {
-  color: #00f2fe;
+  color: #002bfe;
   font-family: 'Share Tech Mono', monospace;
   font-weight: 500;
   font-size: 1rem;
   letter-spacing: 3px;
-  text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+  text-shadow: 0 0 10px rgba(0, 43, 255, 0.4);
 }
 
 /* SiriWave wrap container */
 #siri-wave-wrapper {
-  background: rgba(255, 255, 255, 0.01);
-  border: 1px solid rgba(0, 242, 254, 0.08);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 43, 255, 0.15);
   border-radius: 12px;
   padding: 8px;
 }
@@ -322,6 +307,10 @@ body {
   font-family: 'Share Tech Mono', monospace;
   font-size: 0.85rem;
   letter-spacing: 1px;
+}
+
+.text-cyan {
+  color: #002bfe !important;
 }
 
 /* Chat bubble container */
@@ -334,9 +323,9 @@ body {
   gap: 10px;
   border: 1px solid rgba(255, 255, 255, 0.04);
   border-radius: 12px;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.4);
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 242, 254, 0.2) transparent;
+  scrollbar-color: rgba(0, 43, 255, 0.3) transparent;
 }
 
 .chat-log-container::-webkit-scrollbar {
@@ -348,17 +337,17 @@ body {
 }
 
 .chat-log-container::-webkit-scrollbar-thumb {
-  background: rgba(0, 242, 254, 0.15);
+  background: rgba(0, 43, 255, 0.3);
   border-radius: 10px;
 }
 
 .sender_message {
   padding: 8px 14px;
   border-radius: 16px 16px 0px 16px;
-  background: linear-gradient(135deg, #0052d4 0%, #4364f7 50%, #6fb1fc 100%);
+  background: linear-gradient(135deg, #001eff 0%, #0056ff 100%);
   color: white;
   font-size: 0.9rem;
-  box-shadow: 0 4px 10px rgba(0, 82, 212, 0.2);
+  box-shadow: 0 4px 10px rgba(0, 30, 255, 0.3);
   display: inline-block;
   text-align: left;
 }
@@ -366,13 +355,13 @@ body {
 .receiver_message {
   padding: 8px 14px;
   border-radius: 16px 16px 16px 0px;
-  background: rgba(0, 242, 254, 0.08);
-  border: 1px solid rgba(0, 242, 254, 0.2);
+  background: rgba(0, 43, 255, 0.1);
+  border: 1px solid rgba(0, 43, 255, 0.3);
   color: #f5f5f5;
   font-size: 0.9rem;
   display: inline-block;
   text-align: left;
-  box-shadow: 0 4px 10px rgba(0, 242, 254, 0.05);
+  box-shadow: 0 4px 10px rgba(0, 43, 255, 0.05);
 }
 
 .width-size {
@@ -380,21 +369,19 @@ body {
   width: auto;
 }
 
-/* Glass Input Control Panel */
+/* Input Console Box - Custom styled to match the red glow in the reference image */
 #TextInput {
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 242, 254, 0.15);
-    border-radius: 30px;
+    background: #000000 !important; /* Black background matching reference image */
+    border: 1px solid #ff0000 !important; /* Red border matching reference */
+    box-shadow: 0 0 20px rgb(255, 0, 0) !important; /* Bright red glowing shadow matching reference image */
+    border-radius: 8px !important; /* Rectangular corners matching reference */
     padding: 6px 6px 6px 16px;
     width: 100%;
     transition: all 0.3s ease;
 }
 
 #TextInput:focus-within {
-    border-color: #00f2fe;
-    box-shadow: 0 0 15px rgba(0, 242, 254, 0.25);
-    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.9) !important;
 }
 
 .input-field {
@@ -408,7 +395,7 @@ body {
 }
 
 .input-field::placeholder {
-    color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.35);
 }
 
 .action-btn {
@@ -416,9 +403,8 @@ body {
     height: 38px;
     border: none;
     outline: none;
-    color: #00f2fe;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(0, 242, 254, 0.1);
+    color: #ff0000; /* Red action buttons matching the box's style */
+    background: transparent;
     cursor: pointer;
     border-radius: 50%;
     margin-left: 6px;
@@ -429,9 +415,9 @@ body {
 }
 
 .action-btn:hover {
-    background: #00f2fe;
-    color: #0a0a0a;
-    box-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
+    background: #ff0000;
+    color: #000000;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
     transform: scale(1.05);
 }
 
