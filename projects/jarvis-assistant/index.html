@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jarvis AI Assistant | Chinta Phanith Kumar</title>
+    <title>AEGIS AI Assistant | Chinta Phanith Kumar</title>
     <!-- Bootstrap CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
@@ -19,21 +19,27 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     
     <!-- Custom Style with Cache Buster -->
-    <link rel="stylesheet" href="style.css?v=1.0.8" />
+    <link rel="stylesheet" href="style.css?v=1.0.9" />
   </head>
   <body>
-    <!-- Premium Glowing Background Blobs -->
-    <div class="glowing-bg-cyan"></div>
-    <div class="glowing-bg-purple"></div>
+    <!-- Floating Back to Portfolio Arrow -->
+    <a href="../../index.html" class="back-link">
+      <i class="bi bi-arrow-left"></i> Back
+    </a>
+
+    <!-- Top Center Title Header -->
+    <div class="aegis-header">
+      <span class="aegis-title">AEGIS AI</span>
+    </div>
 
     <!-- Initialization Overlay (Required for Speech Autoplay Compliance) -->
     <div id="activation-overlay">
       <div class="overlay-card">
         <div class="overlay-glow"></div>
-        <h2 class="overlay-title">JARVIS HOLOGRAPHIC ASSISTANT</h2>
+        <h2 class="overlay-title">AEGIS SYSTEM CORE</h2>
         <p class="overlay-subtitle">System Version 1.0.4 - Secure Connection Established</p>
         <div class="boot-logo-container my-4">
           <div class="boot-ring-outer"></div>
@@ -42,7 +48,7 @@
         </div>
         <p class="overlay-desc">Click below to initialize assistant neural networks and sound synthesizers.</p>
         <button id="activate-btn" class="btn-initialize">
-          INITIALIZE JARVIS
+          INITIALIZE AEGIS
         </button>
       </div>
     </div>
@@ -50,46 +56,26 @@
     <!-- Main Content Container -->
     <div class="container d-flex flex-column align-items-center justify-content-center min-vh-100 py-4">
       
-      <!-- Top Navigation bar -->
-      <div class="w-100 max-w-600 mb-3 d-flex justify-content-between align-items-center">
-        <a href="../../index.html" class="back-link">
-          <i class="bi bi-arrow-left"></i> Back to Portfolio
-        </a>
-        <span class="system-time" id="system-time">00:00:00 PM</span>
-      </div>
+      <!-- Central Interface console -->
+      <div class="jarvis-console w-100 d-flex flex-column align-items-center">
 
-      <!-- Jarvis Glass Console Card -->
-      <div class="jarvis-card glass-card w-100 max-w-600">
-        
-        <!-- Header -->
-        <div class="jarvis-header d-flex justify-content-between align-items-center mb-4">
-          <div class="d-flex align-items-center gap-2">
-            <span class="status-dot"></span>
-            <span class="system-status">JARVIS CORE ONLINE</span>
-          </div>
-          <div class="d-flex align-items-center gap-1 system-mono">
-            <span class="text-muted">HOST:</span> LOCALHOST
-          </div>
-        </div>
-
-        <!-- Center Assistant Holographic Ring and Particle Canvas -->
-        <div class="d-flex justify-content-center align-items-center position-relative my-4" style="height: 300px;">
+        <!-- Center Assistant Holographic concentric rings -->
+        <div class="d-flex justify-content-center align-items-center position-relative my-4" style="height: 300px; width: 300px;">
           <div id="fanisHood">
             <div class="square">
               <span></span>
               <span></span>
-              <span></span>
-              <!-- Particle canvas positioned perfectly inside the ring -->
+              <!-- Particle canvas positioned perfectly inside the rings -->
               <canvas id="canvasOne" width="300" height="300"></canvas>
             </div>
           </div>
         </div>
 
-        <!-- Assistant Title / Feedback Status text -->
-        <h4 class="text-light text-center mb-3 text-uppercase tracking-wide system-mono" id="assistant-title">Core Systems Online</h4>
+        <!-- Assistant Title -->
+        <h1 class="text-light text-center" id="assistant-title">Ask me Anything</h1>
 
         <!-- SiriWave Visualizer (hidden by default, appears when speaking/listening) -->
-        <div id="siri-wave-wrapper" class="mb-3">
+        <div id="siri-wave-wrapper" class="w-100 max-w-650 mb-3" style="display: none;">
           <p class="siri-message text-cyan text-center mb-1">Hello, I am Your Assistant</p>
           <div id="siri-container"></div>
         </div>
@@ -99,13 +85,23 @@
           <!-- Conversation bubbles appear here -->
         </div>
 
+        <!-- System Status Indicator Bar -->
+        <div class="input-status-bar d-flex justify-content-end gap-3 mb-2">
+          <span class="status-indicator">
+            <span class="dot blue-dot"></span> System Active
+          </span>
+          <span class="status-indicator">
+            <span class="dot cyan-dot"></span> Connected
+          </span>
+        </div>
+
         <!-- Input Console Box -->
         <div id="TextInput" class="d-flex align-items-center">
           <input
             type="text"
             id="chatbox"
             name="chatbox"
-            placeholder="Ask Jarvis anything..."
+            placeholder="Type your message here..."
             class="input-field"
             autocomplete="off"
           />
@@ -131,8 +127,8 @@
       crossorigin="anonymous"
     ></script>
     <script src="https://unpkg.com/siriwave/dist/siriwave.umd.min.js"></script>
-    <script src="eel.js?v=1.0.8"></script>
-    <script src="script.js?v=1.0.8"></script>
-    <script src="main.js?v=1.0.8"></script>
+    <script src="eel.js?v=1.0.9"></script>
+    <script src="script.js?v=1.0.9"></script>
+    <script src="main.js?v=1.0.9"></script>
   </body>
 </html>
