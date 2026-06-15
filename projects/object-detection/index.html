@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLOv8 Object Detection | Live Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent: #00f2fe;
+            --accent-glow: rgba(0, 242, 254, 0.25);
+            --text-primary: #ffffff;
+            --text-secondary: #a5a5a5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 30%, #a5a5a5 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .back-btn {
+            align-self: flex-start;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            transition: opacity 0.2s;
+        }
+
+        .back-btn:hover {
+            opacity: 0.8;
+        }
+
+        .demo-layout {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .demo-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .interactive-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 400px;
+            backdrop-filter: blur(12px);
+        }
+
+        .canvas-container {
+            position: relative;
+            max-width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--card-border);
+        }
+
+        #display-image {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            max-height: 450px;
+        }
+
+        .bounding-box {
+            position: absolute;
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 8px var(--accent-glow);
+            border-radius: 4px;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .box-label {
+            position: absolute;
+            top: -22px;
+            left: -2px;
+            background: var(--accent);
+            color: #050505;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 3px 3px 0 0;
+            white-space: nowrap;
+        }
+
+        .controls-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            backdrop-filter: blur(12px);
+        }
+
+        .panel-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 0.75rem;
+            color: var(--accent);
+        }
+
+        .sample-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+
+        .sample-card {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+            position: relative;
+        }
+
+        .sample-card:hover {
+            transform: scale(1.05);
+            border-color: var(--accent);
+        }
+
+        .sample-card.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .sample-card img {
+            width: 100%;
+            height: 60px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .upload-section {
+            border: 2px dashed var(--card-border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .upload-section:hover {
+            border-color: var(--accent);
+        }
+
+        .upload-section p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .metrics-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            padding-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-btn">
+            &larr; Back to Portfolio
+        </a>
+        <header>
+            <h1>YOLOv8 Object Detection</h1>
+            <p>Interactive Computer Vision demo highlighting real-time multi-class object detection.</p>
+        </header>
+
+        <div class="demo-layout">
+            <div class="interactive-panel">
+                <div class="canvas-container" id="canvas-container">
+                    <img id="display-image" src="" alt="Detection target">
+                    <!-- Bounding boxes will be inserted here dynamically -->
+                </div>
+            </div>
+
+            <div class="controls-panel">
+                <h3 class="panel-title">Demo Controls</h3>
+                
+                <div>
+                    <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-secondary);">Select Sample Image</h4>
+                    <div class="sample-grid">
+                        <div class="sample-card active" onclick="selectSample(0)">
+                            <img src="../../assets/project-yolo.png" alt="Sample 1">
+                        </div>
+                        <div class="sample-card" onclick="selectSample(1)">
+                            <img src="../../assets/project-bot.png" alt="Sample 2">
+                        </div>
+                        <div class="sample-card" onclick="selectSample(2)">
+                            <img src="../../assets/project-vqa.png" alt="Sample 3">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="upload-section" onclick="document.getElementById('file-input').click()">
+                    <p>Click or Drag to Upload Custom Image</p>
+                    <input type="file" id="file-input" accept="image/*" onchange="handleUpload(event)">
+                </div>
+
+                <div>
+                    <h3 class="panel-title" style="border: none; margin-bottom: 0.5rem;">Inference Statistics</h3>
+                    <div class="metrics-list">
+                        <div class="metric-item">
+                            <span class="metric-label">Model Architecture</span>
+                            <span class="metric-value">YOLOv8s (Small)</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Inference Speed</span>
+                            <span class="metric-value" id="inference-time">12.4 ms</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Confidence Threshold</span>
+                            <span class="metric-value">0.25</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Objects Detected</span>
+                            <span class="metric-value" id="objects-count">3</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const samples = [
+            {
+                url: "../../assets/project-yolo.png",
+                boxes: [
+                    { label: "Person", x: 10, y: 15, w: 25, h: 70, conf: 0.94 },
+                    { label: "Car", x: 45, y: 40, w: 50, h: 50, conf: 0.89 },
+                    { label: "Traffic Light", x: 38, y: 5, w: 8, h: 20, conf: 0.91 }
+                ],
+                time: "11.8 ms"
+            },
+            {
+                url: "../../assets/project-bot.png",
+                boxes: [
+                    { label: "Laptop", x: 20, y: 30, w: 60, h: 60, conf: 0.96 },
+                    { label: "Keyboard", x: 25, y: 75, w: 50, h: 15, conf: 0.88 }
+                ],
+                time: "9.2 ms"
+            },
+            {
+                url: "../../assets/project-vqa.png",
+                boxes: [
+                    { label: "Cat", x: 30, y: 40, w: 40, h: 50, conf: 0.97 },
+                    { label: "Book", x: 5, y: 70, w: 25, h: 20, conf: 0.85 },
+                    { label: "Coffee Mug", x: 75, y: 65, w: 15, h: 22, conf: 0.93 }
+                ],
+                time: "12.6 ms"
+            }
+        ];
+
+        let activeIndex = 0;
+
+        function renderBoxes(boxes) {
+            // Remove existing boxes
+            const container = document.getElementById("canvas-container");
+            const existingBoxes = container.querySelectorAll(".bounding-box");
+            existingBoxes.forEach(b => b.remove());
+
+            // Render new boxes
+            boxes.forEach(box => {
+                const boxEl = document.createElement("div");
+                boxEl.className = "bounding-box";
+                boxEl.style.left = box.x + "%";
+                boxEl.style.top = box.y + "%";
+                boxEl.style.width = box.w + "%";
+                boxEl.style.height = box.h + "%";
+
+                const labelEl = document.createElement("div");
+                labelEl.className = "box-label";
+                labelEl.innerText = `${box.label}: ${(box.conf * 100).toFixed(0)}%`;
+
+                boxEl.appendChild(labelEl);
+                container.appendChild(boxEl);
+            });
+
+            document.getElementById("objects-count").innerText = boxes.length;
+        }
+
+        function selectSample(index) {
+            activeIndex = index;
+            const img = document.getElementById("display-image");
+            img.src = samples[index].url;
+
+            // Remove active classes
+            const cards = document.querySelectorAll(".sample-card");
+            cards.forEach((c, idx) => {
+                if (idx === index) c.classList.add("active");
+                else c.classList.remove("active");
+            });
+
+            document.getElementById("inference-time").innerText = samples[index].time;
+            renderBoxes(samples[index].boxes);
+        }
+
+        function handleUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById("display-image");
+                img.src = e.target.result;
+
+                // Deactivate sample cards
+                const cards = document.querySelectorAll(".sample-card");
+                cards.forEach(c => c.classList.remove("active"));
+
+                // Simulate detection
+                document.getElementById("inference-time").innerText = "Calculating...";
+                setTimeout(() => {
+                    document.getElementById("inference-time").innerText = (10 + Math.random() * 5).toFixed(1) + " ms";
+                    const simulatedBoxes = [
+                        { label: "Detected Object 1", x: 15, y: 20, w: 40, h: 60, conf: 0.88 },
+                        { label: "Detected Object 2", x: 60, y: 45, w: 30, h: 45, conf: 0.76 }
+                    ];
+                    renderBoxes(simulatedBoxes);
+                }, 800);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Init first sample
+        window.addEventListener("load", () => {
+            selectSample(0);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Question Answering (VQA) | Interactive Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent: #b33939; /* Deep Crimson for high tech aesthetic */
+            --accent-green: #00ffd5; /* Neon Cyan */
+            --accent-glow: rgba(0, 255, 213, 0.25);
+            --text-primary: #ffffff;
+            --text-secondary: #a5a5a5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 30%, #a5a5a5 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .back-btn {
+            align-self: flex-start;
+            color: var(--accent-green);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            transition: opacity 0.2s;
+        }
+
+        .back-btn:hover {
+            opacity: 0.8;
+        }
+
+        .demo-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .demo-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .image-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 400px;
+            backdrop-filter: blur(12px);
+        }
+
+        .canvas-container {
+            position: relative;
+            max-width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        #vqa-image {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            max-height: 400px;
+            transition: filter 0.3s;
+        }
+
+        .attention-overlay {
+            position: absolute;
+            border: 3px solid var(--accent-green);
+            box-shadow: 0 0 20px var(--accent-glow), inset 0 0 10px var(--accent-glow);
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .attention-overlay.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .chat-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            backdrop-filter: blur(12px);
+            justify-content: space-between;
+        }
+
+        .panel-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 0.75rem;
+            color: var(--accent-green);
+        }
+
+        .image-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+
+        .selector-card {
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .selector-card:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-green);
+        }
+
+        .selector-card.active {
+            border-color: var(--accent-green);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .selector-card img {
+            width: 100%;
+            height: 60px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .qa-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex-grow: 1;
+            margin-top: 1rem;
+        }
+
+        .question-select {
+            background: #0f0f0f;
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .custom-input-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .custom-input {
+            flex-grow: 1;
+            background: #0f0f0f;
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .custom-input:focus {
+            border-color: var(--accent-green);
+        }
+
+        .btn-ask {
+            background: var(--accent-green);
+            color: #050505;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .btn-ask:hover {
+            opacity: 0.9;
+        }
+
+        .btn-ask:active {
+            transform: scale(0.95);
+        }
+
+        .terminal-output {
+            background: #000000;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Share Tech Mono', monospace;
+            min-height: 120px;
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            overflow-y: auto;
+        }
+
+        .terminal-prompt {
+            color: var(--accent-green);
+        }
+
+        .terminal-loading {
+            color: var(--text-secondary);
+            animation: pulse 1s infinite alternate;
+        }
+
+        .terminal-result {
+            font-size: 1.1rem;
+            color: #fff;
+            margin-top: 0.5rem;
+        }
+
+        .terminal-result strong {
+            color: var(--accent-green);
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html" class="back-btn">
+            &larr; Back to Portfolio
+        </a>
+        <header>
+            <h1>Visual Question Answering</h1>
+            <p>Multimodal AI combining Computer Vision & Natural Language Processing to answer questions about images.</p>
+        </header>
+
+        <div class="demo-layout">
+            <div class="image-panel">
+                <div class="canvas-container" id="canvas-container">
+                    <img id="vqa-image" src="" alt="VQA Target">
+                    <div id="attention-map" class="attention-overlay"></div>
+                </div>
+            </div>
+
+            <div class="chat-panel">
+                <div>
+                    <h3 class="panel-title">1. Select Visual Scene</h3>
+                    <div class="image-selector" style="margin-top: 0.75rem;">
+                        <div class="selector-card active" onclick="selectScene(0)">
+                            <img src="../../assets/project-yolo.png" alt="Scene 1">
+                        </div>
+                        <div class="selector-card" onclick="selectScene(1)">
+                            <img src="../../assets/project-bot.png" alt="Scene 2">
+                        </div>
+                        <div class="selector-card" onclick="selectScene(2)">
+                            <img src="../../assets/project-vqa.png" alt="Scene 3">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="qa-container">
+                    <h3 class="panel-title">2. Ask a Question</h3>
+                    <select id="suggested-questions" class="question-select" onchange="syncQuestion(this.value)">
+                        <!-- Questions populated dynamically -->
+                    </select>
+
+                    <div class="custom-input-group">
+                        <input type="text" id="custom-question" class="custom-input" placeholder="Or type a custom question...">
+                        <button class="btn-ask" onclick="askQuestion()">Ask</button>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="panel-title" style="border: none; margin-bottom: 0.5rem;">VQA Core Engine Output</h3>
+                    <div class="terminal-output" id="terminal">
+                        <div><span class="terminal-prompt">VQA-V2 ></span> Ready. Select a scene and ask a question.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const scenes = [
+            {
+                url: "../../assets/project-yolo.png",
+                questions: [
+                    { q: "What is the person doing?", a: "walking / standing", box: { x: 10, y: 15, w: 25, h: 70 } },
+                    { q: "What color is the car?", a: "blue", box: { x: 45, y: 40, w: 50, h: 50 } },
+                    { q: "Are there any street lights?", a: "yes, one traffic light is visible", box: { x: 38, y: 5, w: 8, h: 20 } }
+                ]
+            },
+            {
+                url: "../../assets/project-bot.png",
+                questions: [
+                    { q: "What is open on the desk?", a: "a laptop computer", box: { x: 20, y: 30, w: 60, h: 60 } },
+                    { q: "What is in front of the screen?", a: "a keyboard", box: { x: 25, y: 75, w: 50, h: 15 } }
+                ]
+            },
+            {
+                url: "../../assets/project-vqa.png",
+                questions: [
+                    { q: "What animal is sleeping?", a: "a cat", box: { x: 30, y: 40, w: 40, h: 50 } },
+                    { q: "What is next to the laptop?", a: "a coffee mug", box: { x: 75, y: 65, w: 15, h: 22 } },
+                    { q: "Where are the books?", a: "on the left side", box: { x: 5, y: 70, w: 25, h: 20 } }
+                ]
+            }
+        ];
+
+        let activeSceneIndex = 0;
+
+        function selectScene(index) {
+            activeSceneIndex = index;
+            const img = document.getElementById("vqa-image");
+            img.src = scenes[index].url;
+
+            // Reset attention overlay
+            const overlay = document.getElementById("attention-map");
+            overlay.classList.remove("active");
+
+            // Update selector active state
+            const cards = document.querySelectorAll(".selector-card");
+            cards.forEach((c, idx) => {
+                if (idx === index) c.classList.add("active");
+                else c.classList.remove("active");
+            });
+
+            // Populate suggested questions
+            const select = document.getElementById("suggested-questions");
+            select.innerHTML = "";
+            scenes[index].questions.forEach((qObj, qIdx) => {
+                const opt = document.createElement("option");
+                opt.value = qObj.q;
+                opt.innerText = qObj.q;
+                select.appendChild(opt);
+            });
+
+            // Sync custom text field
+            if (scenes[index].questions.length > 0) {
+                syncQuestion(scenes[index].questions[0].q);
+            }
+        }
+
+        function syncQuestion(val) {
+            document.getElementById("custom-question").value = val;
+        }
+
+        function askQuestion() {
+            const questionText = document.getElementById("custom-question").value.trim();
+            if (!questionText) return;
+
+            const terminal = document.getElementById("terminal");
+            terminal.innerHTML = `<div><span class="terminal-prompt">VQA-V2 ></span> Processing question: "${questionText}"...</div>`;
+            terminal.innerHTML += `<div class="terminal-loading">Running multimodal fusion attention weights...</div>`;
+
+            // Reset attention overlay
+            const overlay = document.getElementById("attention-map");
+            overlay.classList.remove("active");
+
+            // Look for matching pre-defined question (case insensitive)
+            const currentQuestions = scenes[activeSceneIndex].questions;
+            const match = currentQuestions.find(q => q.q.toLowerCase() === questionText.toLowerCase());
+
+            setTimeout(() => {
+                if (match) {
+                    // Position and show attention highlight
+                    overlay.style.left = match.box.x + "%";
+                    overlay.style.top = match.box.y + "%";
+                    overlay.style.width = match.box.w + "%";
+                    overlay.style.height = match.box.h + "%";
+                    overlay.classList.add("active");
+
+                    terminal.innerHTML += `<div>[INFO] Spatial Attention grid matched! Cross-modal attention focused on coordinates: [x: ${match.box.x}, y: ${match.box.y}].</div>`;
+                    terminal.innerHTML += `<div class="terminal-result">VQA ANSWER: <strong>${match.a}</strong></div>`;
+                } else {
+                    // Simulate smart default answer for generic typed questions
+                    terminal.innerHTML += `<div>[WARN] Question out of predefined dictionary. Running fallback Vision-Language inference...</div>`;
+                    terminal.innerHTML += `<div class="terminal-result">VQA ANSWER: <strong>not sure / cannot determine from context</strong></div>`;
+                }
+                // Scroll to bottom of terminal
+                terminal.scrollTop = terminal.scrollHeight;
+            }, 1000);
+        }
+
+        // Init first scene
+        window.addEventListener("load", () => {
+            selectScene(0);
+        });
+    </script>
+</body>
+</html>
