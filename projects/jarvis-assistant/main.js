@@ -1,6 +1,10 @@
 $(document).ready(function () {
 
-  eel.init()()
+  // Initialize Eel mock
+  eel.init()();
+
+  // Commented out textillate animation calls since they are not loaded in index.html
+  /*
   $(".text").textillate({
     loop: true,
     speed: 1500,
@@ -25,14 +29,15 @@ $(document).ready(function () {
       sync: true,
     },
   });
+  */
 
   var siriWave = new SiriWave({
     container: document.getElementById("siri-container"),
-    width: 940,
+    width: 600,
     style: "ios9",
     amplitude: "1",
     speed: "0.30",
-    height: 200,
+    height: 60,
     autostart: true,
     waveColor: "#ff0000",
     waveOffset: 0,
@@ -42,8 +47,7 @@ $(document).ready(function () {
 
   $("#MicBtn").click(function () {
     eel.play_assistant_sound();
-    $("#Oval").hide();
-    $("#SiriWave").show();
+    $("#siri-wave-wrapper").show();
 
     eel.takeAllCommands()();
   });
@@ -52,8 +56,7 @@ $(document).ready(function () {
 
     if (e.key === "j" && e.metaKey) {
       eel.play_assistant_sound();
-      $("#Oval").hide();
-      $("#SiriWave").show();
+      $("#siri-wave-wrapper").show();
       eel.takeAllCommands()();
     }
   }
@@ -61,8 +64,17 @@ $(document).ready(function () {
 
   function PlayAssistant(message) {
     if (message != "") {
-      $("#Oval").hide();
-      $("#SiriWave").show();
+      // Append user prompt to chat log
+      $("#chat-log").append(`
+        <div class="width-size align-self-end text-end mb-2 ms-auto">
+          <div class="sender_message" style="display: inline-block; padding: 8px 12px; border-radius: 15px 15px 0 15px; background: #0045ff; color: white; text-align: left;">${message}</div>
+        </div>
+      `);
+      
+      // Auto scroll to bottom
+      $("#chat-log").scrollTop($("#chat-log")[0].scrollHeight);
+
+      $("#siri-wave-wrapper").show();
       eel.takeAllCommands(message)();
       $("#chatbox").val("");
       $("#MicBtn").show();

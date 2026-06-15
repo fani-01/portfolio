@@ -423,24 +423,39 @@
         <div class="row">
           <div class="col-md-1"></div>
           <div class="col-md-10">
+            <!-- Center Assistant Ring and Canvas -->
             <div
               class="d-flex justify-content-center align-items-center"
-              style="height: 80vh"
+              style="height: 40vh; position: relative;"
             >
-            <canvas id="canvasOne" width="700" height="420" style="position: absolute; top: 0; left: 0;"></canvas>
-            <script src="script.js"></script>
-            
               <div id="fanisHood">
                 <div class="square">
                   <span class="circle"></span>
                   <span class="circle"></span>
                   <span class="circle"></span>
+                  <canvas id="canvasOne" width="300" height="300" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 10; pointer-events: none;"></canvas>
                 </div>
               </div>
             </div>
-            <h4 class="text-light text-center">Ask me Anything</h4>
+            
+            <script src="script.js"></script>
+            
+            <!-- Welcome title -->
+            <h4 class="text-light text-center" id="assistant-title" style="margin-top: 10px; margin-bottom: 5px;">Ask me Anything</h4>
 
-            <div class="col-md-12 mt-4 pt-4">
+            <!-- Interactive Chat Log -->
+            <div id="chat-log" style="height: 20vh; overflow-y: auto; margin: 10px auto; width: 100%; max-width: 600px; padding: 10px; display: flex; flex-direction: column; gap: 8px; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; background: rgba(0,0,0,0.2);">
+                <!-- Conversation bubbles will appear here -->
+            </div>
+
+            <!-- SiriWave Visualizer (hidden by default) -->
+            <div id="siri-wave-wrapper" style="display: none; text-align: center; margin: 5px auto; width: 100%; max-width: 600px;">
+                <p class="text-light siri-message" style="font-size: 0.95rem; margin-bottom: 5px;">Hello, I am Your Assistant</p>
+                <div id="siri-container" style="width: 100%; height: 60px;"></div>
+            </div>
+
+            <!-- Input Controls -->
+            <div class="col-md-12 mt-2">
               <div class="text-center">
                 <div id="TextInput" class="d-flex">
                   <input
@@ -470,25 +485,7 @@
         </div>
       </section>
 
-      <div id="SiriWave" class="mb-4" style="display: none;">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-12">
-              <div
-                class="d-flex justify-content-center align-items-center"
-                style="height: 40vh; margin-top: 10vh;"
-              >
-                <div class="text-center">
-                  <p class="text-start text-light mb-4 siri-message">
-                    Hello, I am Your Assistant
-                  </p>
-                  <div id="siri-container"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+
     </div>
 
     <!-- Load standard scripts -->
