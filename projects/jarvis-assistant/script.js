@@ -1,4 +1,8 @@
-window.addEventListener("load", windowLoadHandler, false);
+if (document.readyState === "complete" || document.readyState === "interactive") {
+    setTimeout(canvasApp, 1);
+} else {
+    window.addEventListener("load", canvasApp, false);
+}
 var sphereRad = 70; // Adjusted to 70px radius (140px diameter) to fit perfectly inside the 150px transparent center of the ring
 var radius_sp = 1;
 //for debug messages
@@ -10,10 +14,6 @@ Debugger.log = function (message) {
 	catch (exception) {
 		return;
 	}
-}
-
-function windowLoadHandler() {
-	canvasApp();
 }
 
 function canvasSupport() {
